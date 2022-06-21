@@ -96,7 +96,7 @@ socket.on("file", (message) => {
     var div = document.createElement("div");
     div.classList.add("message");
     var img = document.createElement("object");
-    img.setAttribute("style", "width:500px;height:500px");
+    img.setAttribute("style", "width:100%;height:auto");
     img.data = message.message;
     div.innerHTML = `
     <p class="meta">${message.user}<span> ${message.time}</span></p>
