@@ -44,14 +44,18 @@ document.getElementById("msg").addEventListener("click", (e) => {
     ok = 0;
 });
 // Output Message to DOM
+var k = 0;
 function outputMessage(message) {
     const div = document.createElement("div");
     div.classList.add("message");
-    highlightUrl(message.message);
+    k = 0;
+    console.log(message.message.search("<iframe>"));
+    if (message.message.search("</iframe>") === -1)
+        message.message = highlightUrl(message.message);
     div.innerHTML = `
     <p class="meta">${message.user}<span> ${message.time}</span></p>
     <p class="text">
-        ${highlightUrl(message.message)}
+        ${message.message}
     </p>
     `;
     document.querySelector(".chat-messages").appendChild(div);
@@ -59,6 +63,7 @@ function outputMessage(message) {
 function highlightUrl(message) {
     var urlRegex = /(https?:\/\/[^\s]+)/g;
     return message.replace(urlRegex, function (url) {
+        k = 1;
         return '<a href="' + url + '">' + url + "</a>";
     });
 }
