@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <link
+            rel="stylesheet"
+            href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.1.1/css/all.min.css"
+            integrity="sha512-KfkfwYDsLkIlwQp6LFnl8zNdLGxu9YAA1QvwINks4PhcElQSvqcyVLLD9aMhXd13uQjoXtEKNosOWaZqXgel0g=="
+            crossorigin="anonymous"
+            referrerpolicy="no-referrer"
+        />
+        <link rel="stylesheet" href="css/style.css" />
+        <script
+            type="module"
+            src="https://cdn.jsdelivr.net/npm/emoji-picker-element@^1/index.js"
+        ></script>
+        <title>Zipify App</title>
+    </head>
+    <body class="body">
+        <div class="chat-container">
+            <header class="chat-header">
+                <h1><i class="fas fa-comments"></i> Zipify</h1>
+                <a href="index.html" class="btn">Leave Room</a>
+            </header>
+            <main class="chat-main">
+                <div class="chat-sidebar">
+                    <h3><i class="fas fa-people-roof"></i> Room Name:</h3>
+                    <h2 id="room-name"></h2>
+                    <h3><i class="fas fa-users"></i> Users</h3>
+                    <ul id="users"></ul>
+                </div>
+                <div class="chat-messages"></div>
+            </main>
+            <div class="chat-form-container">
+                <form id="chat-form">
+                    <input
+                        id="msg"
+                        type="text"
+                        placeholder="Enter Message"
+                        autocomplete="off"
+                    />
+                    <button class="btn">
+                        <i class="fas fa-paper-plane"></i> Send
+                    </button>
+                    <div>
+                        <button id="emoji">
+                            <i class="fas fa-smile"></i>
+                        </button>
+                    </div>
+                </form>
+                <form id="file-form">
+                    <input id="file" type="file" required multiple />
+                    <button class="btn">
+                        <i class="fas fa-paperclip"></i> Send
+                    </button>
+                </form>
+            </div>
+        </div>
+        <div id="bottom"></div>
+        <!-- Script to parse queries from url -->
+        <script
+            src="https://cdnjs.cloudflare.com/ajax/libs/qs/6.10.5/qs.min.js"
+            integrity="sha512-JduLFfiB5t9F2dYayaCCWObe/SeciiMhX2MHAKGvQ22crUA/Sb1l4elG5A7r7Bu1tP2rs1cU5lR1Irx/govVdg=="
+            crossorigin="anonymous"
+            referrerpolicy="no-referrer"
+        ></script>
+        <!-- This script gives us the access to the front end library -->
+        <script src="socket.io/socket.io.js"></script>
+        <script src="/siofu/client.js"></script>
+        <script src="js/main.js"></script>
+    </body>
+</html>
