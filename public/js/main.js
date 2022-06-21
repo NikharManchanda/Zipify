@@ -22,6 +22,17 @@ socket.on("roomUsers", ({ room, users }) => {
 });
 
 // Message from server
+socket.on("previous-msgs", (message) => {
+    if (!message.length) return;
+    message.forEach((msg) => {
+        outputMessage({ user: msg.user, message: msg.msg, time: msg.time });
+        chatMessages.scrollTop = chatMessages.scrollHeight;
+    });
+    // outputMessage(message);
+    // Automatically scroll Down
+});
+
+// Message from server
 socket.on("message", (message) => {
     outputMessage(message);
     // Automatically scroll Down
@@ -49,7 +60,6 @@ function outputMessage(message) {
     const div = document.createElement("div");
     div.classList.add("message");
     k = 0;
-    console.log(message.message.search("<iframe>"));
     if (message.message.search("</iframe>") === -1)
         message.message = highlightUrl(message.message);
     div.innerHTML = `
@@ -84,19 +94,19 @@ siofu.listenOnInput(document.getElementById("file"));
 // Do something on upload progress:
 siofu.addEventListener("progress", function (event) {
     var percent = (event.bytesLoaded / event.file.size) * 100;
-    console.log("File is", percent.toFixed(2), "percent loaded");
+    document.getElementById("file-progress").value = percent.toFixed(2);
 });
 
 // Do something when a file is uploaded:
 siofu.addEventListener("complete", function (event) {
-    console.log(event.detail.name);
+    document.getElementById("file-progress").value = 0;
     socket.emit("fileMessage", event.detail.name);
 });
 socket.on("file", (message) => {
     var div = document.createElement("div");
     div.classList.add("message");
     var img = document.createElement("object");
-    img.setAttribute("style", "width:100%;height:auto");
+    img.setAttribute("style", "width:100%;height:auto;min-height:500px");
     img.data = message.message;
     div.innerHTML = `
     <p class="meta">${message.user}<span> ${message.time}</span></p>

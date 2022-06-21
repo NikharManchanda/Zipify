@@ -10,6 +10,20 @@ const {
     getRoomUsers,
 } = require("./utils/users");
 const fs = require("fs");
+const mongoose = require("mongoose");
+
+const dotenv = require("dotenv");
+dotenv.config();
+
+const url = process.env.URL;
+const Msg = require("./models/messages");
+
+mongoose
+    .connect(url, { useNewUrlParser: true, useUnifiedTopology: true })
+    .then(() => {
+        console.log("Connected to DB");
+    })
+    .catch((err) => console.log(err));
 
 const app = express();
 
@@ -35,6 +49,9 @@ io.on("connection", (socket) => {
     socket.on("joinRoom", ({ username, room }) => {
         userJoin(socket.id, username, room);
         socket.join(room);
+        Msg.find({ room: room }).then((result) => {
+            socket.emit("previous-msgs", result);
+        });
 
         // This will emit to single client that we are connecting
         socket.emit(
@@ -59,7 +76,24 @@ io.on("connection", (socket) => {
         // Broadcast to everybody in the room using io.emit();
         const user = getCurrentUser(socket.id);
         if (!user) return;
-        io.to(user.room).emit("message", formatMessage(user.username, message));
+        const {
+            user: usr,
+            message: msg,
+            time,
+        } = formatMessage(user.username, message);
+        console.log(usr, msg, time);
+        const messageDB = new Msg({
+            user: usr,
+            msg,
+            time,
+            room: user.room,
+        });
+        messageDB.save().then(() => {
+            io.to(user.room).emit(
+                "message",
+                formatMessage(user.username, message)
+            );
+        });
     });
 
     // When someone disconnects
@@ -98,7 +132,6 @@ io.on("connection", (socket) => {
     socket.on("fileMessage", (message) => {
         // Broadcast to everybody in the room using io.emit();
         const user = getCurrentUser(socket.id);
-        console.log(user);
         io.to(user.room).emit(
             "file",
             formatMessage(user.username, message),
@@ -125,7 +158,7 @@ function deleteFiles() {
                     return console.error(err);
                 }
                 now = new Date().getTime();
-                endTime = new Date(stat.ctime).getTime() + 10000;
+                endTime = new Date(stat.ctime).getTime() + 1000000;
                 if (now >= endTime) {
                     return rimraf(path.join(uploadsDir, file), function (err) {
                         if (err) {
